@@ -1,0 +1,38 @@
+function doPost(e) {
+  try {
+    const data = JSON.parse(e.postData.contents);
+
+    const ss = SpreadsheetApp.openById("1NxbbS6x4_6O8j0E8VnYMoxc8Cjxh0DMjh2z2WsxFFaw");
+    const sh = ss.getSheetByName("Sheet1"); // ganti nama sheet jika perlu
+
+    const row = [
+      new Date(),
+      data.nama || "",
+      data.npp || "",
+      data.divisi || "",
+      data.region || "",
+      data.cou || "",
+      data.jabatan || "",
+      data.jawaban1 || "",
+      data.jawaban2 || "",
+      data.jawaban3 || "",
+      data.jawaban4 || "",
+      data.jawaban5 || "",
+      data.jawaban6 || "",
+      data.jawaban7 || "",
+      data.jawaban8 || ""
+    ];
+
+    sh.appendRow(row);
+
+    return ContentService.createTextOutput(JSON.stringify({status:"ok"})).setMimeType(ContentService.MimeType.JSON);
+
+  } catch (err) {
+    return ContentService.createTextOutput(JSON.stringify({status:"error", message: err.toString()})).setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+// optional health check
+function doGet(e){
+  return ContentService.createTextOutput("OK");
+}
