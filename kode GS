@@ -1,38 +1,65 @@
-function doPost(e) {
+function doGet(e) {
+  return handleRequest(e);
+}
+
+function handleRequest(e) {
   try {
-    const data = JSON.parse(e.postData.contents);
-
-    const ss = SpreadsheetApp.openById("1NxbbS6x4_6O8j0E8VnYMoxc8Cjxh0DMjh2z2WsxFFaw");
-    const sh = ss.getSheetByName("Sheet1"); // ganti nama sheet jika perlu
-
-    const row = [
+    // Get parameters from URL
+    var params = e.parameter;
+    
+    // Log received data
+    console.log('Received data:', params);
+    
+    // Save to spreadsheet
+    var ss = SpreadsheetApp.openById("1NxbbS6x4_6O8j0E8VnYMoxc8Cjxh0DMjh2z2WsxFFaw");
+    var sheet = ss.getSheetByName("Sheet1");
+    
+    var rowData = [
       new Date(),
-      data.nama || "",
-      data.npp || "",
-      data.divisi || "",
-      data.region || "",
-      data.cou || "",
-      data.jabatan || "",
-      data.jawaban1 || "",
-      data.jawaban2 || "",
-      data.jawaban3 || "",
-      data.jawaban4 || "",
-      data.jawaban5 || "",
-      data.jawaban6 || "",
-      data.jawaban7 || "",
-      data.jawaban8 || ""
+      params.nama || "",
+      params.npp || "",
+      params.divisi || "",
+      params.region || "",
+      params.cou || "",
+      params.jabatan || "",
+      params.jawaban1 || "",
+      params.jawaban2 || "",
+      params.jawaban3 || "",
+      params.jawaban4 || "",
+      params.jawaban5 || "",
+      params.jawaban6 || "",
+      params.jawaban7 || "",
+      params.jawaban8 || ""
     ];
-
-    sh.appendRow(row);
-
-    return ContentService.createTextOutput(JSON.stringify({status:"ok"})).setMimeType(ContentService.MimeType.JSON);
-
-  } catch (err) {
-    return ContentService.createTextOutput(JSON.stringify({status:"error", message: err.toString()})).setMimeType(ContentService.MimeType.JSON);
+    
+    sheet.appendRow(rowData);
+    
+    // Return simple success response
+    return ContentService.createTextOutput("SUCCESS: Data saved to row " + sheet.getLastRow())
+      .setMimeType(ContentService.MimeType.TEXT);
+      
+  } catch (error) {
+    console.error('Error:', error);
+    return ContentService.createTextOutput("ERROR: " + error.toString())
+      .setMimeType(ContentService.MimeType.TEXT);
   }
 }
 
-// optional health check
-function doGet(e){
-  return ContentService.createTextOutput("OK");
+// Test function
+function testDoGet() {
+  var mockData = {
+    parameter: {
+      nama: "Test User",
+      npp: "12345",
+      divisi: "HCC",
+      region: "Region 1",
+      jabatan: "Staf",
+      jawaban1: "Test jawaban 1",
+      jawaban2: "Test jawaban 2"
+    }
+  };
+  
+  var result = handleRequest(mockData);
+  Logger.log(result.getContent());
+  return result.getContent();
 }
